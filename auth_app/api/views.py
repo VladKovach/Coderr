@@ -8,24 +8,32 @@ from rest_framework.views import APIView
 from .serializers import LoginSerializer, RegistrationSerializer
 
 
-class RegistrationView(CreateAPIView):
-    serializer_class = RegistrationSerializer
+class RegistrationView(APIView):
+    """
+    Handles user registration with token authentication.
+
+    Accepts email, password, etc. Creates user + token in one request.
+    Returns user data + token.
+    """
+
     permission_classes = [AllowAny]
 
-    def create(self, request, *args, **kwargs):
-        response = super().create(request, *args, **kwargs)
+    def post(self, request):
+        serializer = RegistrationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        user = self.get_serializer().instance
+        user = serializer.save()
         token, _ = Token.objects.get_or_create(user=user)
 
-        response.data = {
-            "token": token.key,
-            "username": user.username,
-            "email": user.email,
-            "user_id": user.id,
-        }
-
-        return response
+        return Response(
+            {
+                "token": token.key,
+                "username": user.email,
+                "email": user.email,
+                "user_id": user.id,
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class LoginView(APIView):
