@@ -1,6 +1,8 @@
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework import serializers
 
+from profiles_app.models import Profile
+
 User = get_user_model()
 
 
@@ -33,7 +35,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # Remove confirmation field before user creation
         validated_data.pop("repeated_password")
-        return User.objects.create_user(**validated_data)
+        user = User.objects.create_user(**validated_data)
+        Profile.objects.create(user=user)
+        return user
 
 
 class LoginSerializer(serializers.Serializer):
