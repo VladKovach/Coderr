@@ -20,6 +20,7 @@ class Profile(models.Model):
     description = models.TextField(blank=True, null=True)
     working_from = models.TimeField(blank=True, null=True)
     working_to = models.TimeField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         """Meta definition for Profile."""
@@ -29,4 +30,4 @@ class Profile(models.Model):
 
     def __str__(self):
         """Unicode representation of Profile."""
-        pass
+        return self.user.id
