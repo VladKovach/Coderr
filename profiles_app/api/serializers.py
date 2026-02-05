@@ -59,7 +59,6 @@ class ProfileDetailSerializer(serializers.ModelSerializer):
         return attrs
 
     def update(self, instance, validated_data):
-        print("validated_data = ", validated_data)
         user_data = validated_data.pop("user", {})
 
         # Update User fields

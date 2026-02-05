@@ -51,13 +51,12 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, attrs):
         username = attrs.get("username")
         password = attrs.get("password")
-        print("username = ", username)
-        print("password = ", password)
+
         user = authenticate(
             username=attrs.get("username"),
             password=attrs.get("password"),
         )
-        print(user)
+
         if not user:
             raise serializers.ValidationError("Invalid credentials")
 
