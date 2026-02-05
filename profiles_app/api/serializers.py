@@ -42,10 +42,24 @@ class ProfileDetailSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         # self.instance is always the existing Profile
-        self.instance.full_clean()
+        # Copy current instance
+        instance = self.instance
+
+        # Apply incoming changes to the instance
+        for attr, value in attrs.items():
+            if attr == "user":
+                for u_attr, u_value in value.items():
+                    setattr(instance.user, u_attr, u_value)
+            else:
+                setattr(instance, attr, value)
+
+        # Now validate the modified instance
+        instance.full_clean()
+
         return attrs
 
     def update(self, instance, validated_data):
+        print("validated_data = ", validated_data)
         user_data = validated_data.pop("user", {})
 
         # Update User fields
@@ -55,3 +69,43 @@ class ProfileDetailSerializer(serializers.ModelSerializer):
 
         # Update Profile fields
         return super().update(instance, validated_data)
+
+
+class ProfileBusinessSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="user.username", read_only=True)
+    first_name = serializers.CharField(source="user.first_name")
+    last_name = serializers.CharField(source="user.last_name")
+    type = serializers.CharField(source="user.type", read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = [
+            "user",
+            "username",
+            "first_name",
+            "last_name",
+            # 'file',
+            "location",
+            "tel",
+            "description",
+            "working_hours",
+            "type",
+        ]
+
+
+class ProfileCustomerSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="user.username", read_only=True)
+    first_name = serializers.CharField(source="user.first_name")
+    last_name = serializers.CharField(source="user.last_name")
+    type = serializers.CharField(source="user.type", read_only=True)
+
+    class Meta:
+        model = Profile
+        fields = [
+            "user",
+            "username",
+            "first_name",
+            "last_name",
+            # 'file',
+            "type",
+        ]

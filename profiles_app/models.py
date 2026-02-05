@@ -47,7 +47,7 @@ class Profile(models.Model):
             start, end = self.working_hours.split("-")
             print("start = ", start)
             print("end = ", end)
-            if int(start) > int(end):
+            if int(start) >= int(end):
                 raise ValidationError(
                     {"working_hours": "Start time must be before end time."}
                 )
