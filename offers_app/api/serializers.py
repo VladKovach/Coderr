@@ -80,6 +80,8 @@ class OffersListSerializer(serializers.ModelSerializer):
     OffersSerializer description
     """
 
+    min_price = serializers.IntegerField(read_only=True)
+    min_delivery_time = serializers.IntegerField(read_only=True)
     details = OfferdetailsRefSerializer(many=True, read_only=True)
 
     class Meta:
@@ -93,6 +95,8 @@ class OffersListSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "details",
+            "min_price",
+            "min_delivery_time",
         ]
 
 
@@ -100,6 +104,7 @@ class OffersDetailSerializer(serializers.ModelSerializer):
     min_price = serializers.IntegerField(read_only=True)
     min_delivery_time = serializers.IntegerField(read_only=True)
     details = OfferdetailsRefSerializer(many=True, read_only=True)
+    # details = OfferdetailsSerializer(many=True, read_only=True)
 
     class Meta:
         model = Offer

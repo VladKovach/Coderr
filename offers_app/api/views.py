@@ -1,9 +1,13 @@
 from django.core.serializers import get_serializer
+from django.db.models import Min
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveAPIView,
     RetrieveUpdateDestroyAPIView,
 )
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import SAFE_METHODS, AllowAny, IsAuthenticated
 
 from offers_app.api.permissions import IsBusinessUser, IsOfferOwner
@@ -18,6 +22,8 @@ from offers_app.models import Offer, OfferDetail
 
 class OffersListCreateView(ListCreateAPIView):
     queryset = Offer.objects.all()
+    pagination_class = PageNumberPagination
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
 
     def get_permissions(self):
         if self.request.method == "GET":
@@ -30,8 +36,14 @@ class OffersListCreateView(ListCreateAPIView):
             return OffersSerializer
         return OffersListSerializer
 
-    def get_serializer_context(self):
-        return {"request": self.request}
+    # def get_serializer_context(self):
+    #     return {"request": self.request}
+
+    def get_queryset(self):
+        return Offer.objects.prefetch_related("details").annotate(
+            min_delivery_time=Min("details__delivery_time_in_days"),
+            min_price=Min("details__price"),
+        )
 
 
 class OffersDetailView(RetrieveUpdateDestroyAPIView):
@@ -49,6 +61,12 @@ class OffersDetailView(RetrieveUpdateDestroyAPIView):
             return OffersDetailSerializer
         # PATCH/PUT/DELETE → normal serializer
         return OffersSerializer
+
+    def get_queryset(self):
+        return Offer.objects.prefetch_related("details").annotate(
+            min_delivery_time=Min("details__delivery_time_in_days"),
+            min_price=Min("details__price"),
+        )
 
 
 class OfferdetailsView(RetrieveAPIView):

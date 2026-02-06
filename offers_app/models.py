@@ -11,7 +11,7 @@ class Offer(models.Model):
     user = models.ForeignKey(
         User, related_name="offers", on_delete=models.CASCADE
     )
-    title = models.CharField(max_length=255, unique=True)
+    title = models.CharField(max_length=255)
     image = models.ImageField(upload_to="offer/", blank=True, null=True)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
