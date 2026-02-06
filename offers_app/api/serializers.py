@@ -21,6 +21,16 @@ class OfferdetailsSerializer(serializers.ModelSerializer):
         ]
 
 
+class OfferdetailsRefSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    OffersSerializer description
+    """
+
+    class Meta:
+        model = OfferDetail
+        fields = ["id", "url"]
+
+
 class OffersSerializer(serializers.ModelSerializer):
     """
     OffersSerializer description
@@ -45,12 +55,10 @@ class OffersSerializer(serializers.ModelSerializer):
         instance = super().update(instance, validated_data)
 
         if details_data is not None:
-            # Remove old details
-            instance.details.all().delete()
-
-        # Create new ones
-        for detail in details_data:
-            OfferDetail.objects.create(offer=instance, **detail)
+            for detail in details_data:
+                offer_type = detail.get("offer_type")
+                offer_detail = instance.details.get(offer_type=offer_type)
+                super().update(offer_detail, detail)
 
         return instance
 
@@ -72,6 +80,8 @@ class OffersListSerializer(serializers.ModelSerializer):
     OffersSerializer description
     """
 
+    details = OfferdetailsRefSerializer(many=True, read_only=True)
+
     class Meta:
         model = Offer
         fields = [
@@ -84,16 +94,6 @@ class OffersListSerializer(serializers.ModelSerializer):
             "updated_at",
             "details",
         ]
-
-
-class OfferdetailsRefSerializer(serializers.HyperlinkedModelSerializer):
-    """
-    OffersSerializer description
-    """
-
-    class Meta:
-        model = OfferDetail
-        fields = ["id", "url"]
 
 
 class OffersDetailSerializer(serializers.ModelSerializer):

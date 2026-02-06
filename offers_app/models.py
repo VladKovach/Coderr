@@ -11,7 +11,7 @@ class Offer(models.Model):
     user = models.ForeignKey(
         User, related_name="offers", on_delete=models.CASCADE
     )
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, unique=True)
     image = models.ImageField(upload_to="offer/", blank=True, null=True)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -25,7 +25,7 @@ class Offer(models.Model):
 
     def __str__(self):
         """Unicode representation of Offer."""
-        pass
+        return str(self.id)
 
 
 class OfferDetail(models.Model):
@@ -48,4 +48,4 @@ class OfferDetail(models.Model):
 
     def __str__(self):
         """Unicode representation of OfferDetail."""
-        pass
+        return str(self.id)
