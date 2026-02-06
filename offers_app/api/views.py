@@ -11,7 +11,7 @@ from offers_app.api.serializers import (
     OffersListSerializer,
     OffersSerializer,
 )
-from offers_app.models import Offer
+from offers_app.models import Offer, OfferDetail
 
 
 class OffersListCreateView(ListCreateAPIView):
@@ -38,5 +38,5 @@ class OffersDetailView(RetrieveUpdateDestroyAPIView):
 
 
 class OfferdetailsView(RetrieveAPIView):
-    queryset = Offer.objects.all()
+    queryset = OfferDetail.objects.all()
     serializer_class = OfferdetailsSerializer

@@ -23,7 +23,7 @@ class ProfileDetailSerializer(serializers.ModelSerializer):
             "username",
             "first_name",
             "last_name",
-            # 'file',
+            "file",
             "location",
             "tel",
             "description",
@@ -31,14 +31,7 @@ class ProfileDetailSerializer(serializers.ModelSerializer):
             "type",
             "email",
             "created_at",
-            # "working_from",
-            # "working_to",
         ]
-
-    # def get_working_hours(self, obj):
-    #     if obj.working_from and obj.working_to:
-    #         return f"{obj.working_from.hour}-{obj.working_to.hour}"
-    #     return None
 
     def validate(self, attrs):
         # self.instance is always the existing Profile
@@ -83,7 +76,7 @@ class ProfileBusinessSerializer(serializers.ModelSerializer):
             "username",
             "first_name",
             "last_name",
-            # 'file',
+            "file",
             "location",
             "tel",
             "description",
@@ -105,6 +98,6 @@ class ProfileCustomerSerializer(serializers.ModelSerializer):
             "username",
             "first_name",
             "last_name",
-            # 'file',
+            "file",
             "type",
         ]
