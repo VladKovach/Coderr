@@ -16,4 +16,4 @@ urlpatterns = [
         OfferdetailsView.as_view(),
         name="offerdetail-detail",
     ),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

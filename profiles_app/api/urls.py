@@ -24,4 +24,4 @@ urlpatterns = [
         ProfileCustomerView.as_view(),
         name="profile-detail",
     ),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
