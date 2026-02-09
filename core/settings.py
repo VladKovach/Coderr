@@ -44,10 +44,13 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework.authtoken",
+    "django_filters",
+    "phonenumber_field",
+    # ------ apps -------
     "auth_app",
     "profiles_app",
     "offers_app",
-    "phonenumber_field",
+    # ------ apps -------
 ]
 
 MIDDLEWARE = [
@@ -134,5 +137,6 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+    "PAGE_SIZE": 8,
 }
 AUTH_USER_MODEL = "auth_app.User"

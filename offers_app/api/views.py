@@ -1,14 +1,14 @@
-from django.core.serializers import get_serializer
 from django.db.models import Min
+from django_filters import FilterSet, NumberFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveAPIView,
     RetrieveUpdateDestroyAPIView,
 )
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import SAFE_METHODS, AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from offers_app.api.permissions import IsBusinessUser, IsOfferOwner
 from offers_app.api.serializers import (
@@ -20,10 +20,17 @@ from offers_app.api.serializers import (
 from offers_app.models import Offer, OfferDetail
 
 
+class OfferListFilter(FilterSet):
+    min_price = NumberFilter(field_name="price", lookup_expr="gte")
+    max_price = NumberFilter(field_name="price", lookup_expr="lte")
+
+
 class OffersListCreateView(ListCreateAPIView):
     queryset = Offer.objects.all()
     pagination_class = PageNumberPagination
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    search_fields = ["title", "description"]
+    filterset_class = OfferListFilter
 
     def get_permissions(self):
         if self.request.method == "GET":
