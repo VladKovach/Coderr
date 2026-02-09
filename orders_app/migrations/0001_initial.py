@@ -15,23 +15,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Offer',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255)),
-                ('image', models.ImageField(blank=True, null=True, upload_to='offer/')),
-                ('description', models.TextField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='offers', to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'verbose_name': 'Offer',
-                'verbose_name_plural': 'Offers',
-            },
-        ),
-        migrations.CreateModel(
-            name='OfferDetail',
+            name='Order',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=255)),
@@ -40,7 +24,15 @@ class Migration(migrations.Migration):
                 ('price', models.DecimalField(decimal_places=2, max_digits=10)),
                 ('features', models.JSONField(blank=True, default=list)),
                 ('offer_type', models.CharField(choices=[('basic', 'basic'), ('standard', 'standard'), ('premium', 'premium')], max_length=20)),
-                ('offer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='details', to='offers_app.offer')),
+                ('status', models.CharField(choices=[('in_progress', 'in_progress'), ('completed', 'completed')], default='in_progress', max_length=20)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('updated_at', models.DateTimeField(auto_now=True)),
+                ('business_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='business_orders', to=settings.AUTH_USER_MODEL)),
+                ('customer_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='customers_orders', to=settings.AUTH_USER_MODEL)),
             ],
+            options={
+                'verbose_name': 'Order',
+                'verbose_name_plural': 'Orders',
+            },
         ),
     ]

@@ -66,7 +66,6 @@ class OfferListFilter(FilterSet):
 
 
 class OffersListCreateView(ListCreateAPIView):
-    queryset = Offer.objects.all()
     pagination_class = OffersPagination
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     search_fields = ["title", "description"]
