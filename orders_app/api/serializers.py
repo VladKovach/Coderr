@@ -7,7 +7,7 @@ from orders_app.models import Order
 
 class OrderCreateSerializer(serializers.ModelSerializer):
     """
-    OrderSerializer description
+    OrderCreateSerializer description
     """
 
     offer_detail_id = serializers.IntegerField(write_only=True)
@@ -25,7 +25,6 @@ class OrderCreateSerializer(serializers.ModelSerializer):
             "features",
             "offer_type",
             "status",
-            "offer_type",
             "created_at",
             "offer_detail_id",
         ]
@@ -92,7 +91,50 @@ class OrderListSerializer(serializers.ModelSerializer):
             "features",
             "offer_type",
             "status",
-            "offer_type",
             "created_at",
             "updated_at",
         ]
+
+
+class OrderDetailSerializer(serializers.ModelSerializer):
+    """
+    OrderDetailSerializer description
+    """
+
+    class Meta:
+        model = Order
+        fields = [
+            "id",
+            "customer_user",
+            "business_user",
+            "title",
+            "revisions",
+            "delivery_time_in_days",
+            "price",
+            "features",
+            "offer_type",
+            "status",
+            "created_at",
+        ]
+        read_only_fields = [
+            "id",
+            "customer_user",
+            "business_user",
+            "title",
+            "revisions",
+            "delivery_time_in_days",
+            "price",
+            "features",
+            "offer_type",
+            "created_at",
+        ]
+
+
+class OrderCountSerializer(serializers.ModelSerializer):
+    """
+    OrderCountSerializer description
+    """
+
+    class Meta:
+        model = Order
+        fields = ["order_count"]
