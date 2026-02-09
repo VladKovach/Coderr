@@ -1,15 +1,10 @@
 from django.contrib.auth import get_user_model
-from django.http import Http404
-from rest_framework import status
-from rest_framework.generics import (
-    ListCreateAPIView,
-    RetrieveAPIView,
-    RetrieveUpdateDestroyAPIView,
-)
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from orders_app.api.permissions import IsBusinessOrStaff, IsCustomerForCreate
 from orders_app.api.serializers import (
     OrderCreateSerializer,
     OrderDetailSerializer,
@@ -20,9 +15,9 @@ from orders_app.models import Order
 User = get_user_model()
 
 
-class OrdersListCreateView(ListCreateAPIView):
+class OrdersListCreateView(generics.ListCreateAPIView):
     queryset = Order.objects.all()
-    permission_classes = [IsAuthenticated]  # IsCustomerForCreate
+    permission_classes = [IsAuthenticated, IsCustomerForCreate]
 
     def get_serializer_class(self):
         if self.request.method == "POST":
@@ -30,13 +25,16 @@ class OrdersListCreateView(ListCreateAPIView):
         return OrderListSerializer
 
 
-class OrdersDetailView(RetrieveUpdateDestroyAPIView):
+class OrdersDetailView(generics.UpdateAPIView, generics.DestroyAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderDetailSerializer
+    permission_classes = [IsAuthenticated, IsBusinessOrStaff]
+
     lookup_field = "id"
 
 
 class OrderCountDetailView(APIView):
+
     def get(self, request, *args, **kwargs):
         business_user_id = kwargs.get("business_user_id")
 
