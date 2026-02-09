@@ -5,7 +5,7 @@ from offers_app.models import Offer, OfferDetail
 
 class OfferdetailsSerializer(serializers.ModelSerializer):
     """
-    OffersSerializer description
+    OfferdetailsSerializer description
     """
 
     class Meta:
@@ -23,7 +23,7 @@ class OfferdetailsSerializer(serializers.ModelSerializer):
 
 class OfferdetailsRefSerializer(serializers.HyperlinkedModelSerializer):
     """
-    OffersSerializer description
+    OfferdetailsRefSerializer description
     """
 
     class Meta:
@@ -77,7 +77,7 @@ class OffersSerializer(serializers.ModelSerializer):
 
 class OffersListSerializer(serializers.ModelSerializer):
     """
-    OffersSerializer description
+    OffersListSerializer description
     """
 
     min_price = serializers.IntegerField(read_only=True)

@@ -28,9 +28,9 @@ class OffersPagination(PageNumberPagination):
 
 
 class OfferListFilter(FilterSet):
-    min_price = NumberFilter(field_name="details__price", lookup_expr="gte")
+    min_price = NumberFilter(lookup_expr="gte")
     max_delivery_time = NumberFilter(
-        field_name="details__price", lookup_expr="lte"
+        field_name="details__delivery_time_in_days", lookup_expr="lte"
     )
     creator_id = NumberFilter(field_name="user_id")
 
