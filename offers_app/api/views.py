@@ -1,6 +1,7 @@
 from django.db.models import Min
 from django_filters import FilterSet, NumberFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.exceptions import ValidationError
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.generics import (
     ListCreateAPIView,
@@ -20,16 +21,56 @@ from offers_app.api.serializers import (
 from offers_app.models import Offer, OfferDetail
 
 
+class OffersPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
 class OfferListFilter(FilterSet):
-    min_price = NumberFilter(field_name="price", lookup_expr="gte")
-    max_price = NumberFilter(field_name="price", lookup_expr="lte")
+    min_price = NumberFilter(field_name="details__price", lookup_expr="gte")
+    max_delivery_time = NumberFilter(
+        field_name="details__price", lookup_expr="lte"
+    )
+    creator_id = NumberFilter(field_name="user_id")
+
+    class Meta:
+        model = Offer
+        fields = ["creator_id", "min_price", "max_delivery_time"]
+
+    def clean(self):
+        """
+        super().clean() calls the default clean() method of FilterSet, which:
+
+        Converts query params from strings to the proper Python type (e.g., '3' → 3)
+
+        Runs field-level validation (like your NumberFilter)
+
+        Returns a dict of validated and converted values called cleaned_data
+        e.g., {'creator_id': 5, 'max_delivery_time': 7}
+        """
+        cleaned_data = super().clean()
+
+        creator_id = cleaned_data.get("creator_id")
+        if creator_id is not None and not creator_id.is_integer():
+            raise ValidationError({"creator_id": "Must be an integer"})
+
+        max_delivery_time = cleaned_data.get("max_delivery_time")
+        if (
+            max_delivery_time is not None
+            and not max_delivery_time.is_integer()
+        ):
+            raise ValidationError({"max_delivery_time": "Must be an integer"})
+
+        return cleaned_data
 
 
 class OffersListCreateView(ListCreateAPIView):
     queryset = Offer.objects.all()
-    pagination_class = PageNumberPagination
+    pagination_class = OffersPagination
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     search_fields = ["title", "description"]
+    ordering_fields = ["updated_at", "min_price"]
     filterset_class = OfferListFilter
 
     def get_permissions(self):
