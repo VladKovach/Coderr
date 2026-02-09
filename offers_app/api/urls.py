@@ -7,12 +7,12 @@ from .views import OfferdetailsView, OffersDetailView, OffersListCreateView
 urlpatterns = [
     path("offers/", OffersListCreateView.as_view(), name="offers-list"),
     path(
-        "offers/<int:pk>/",
+        "offers/<int:id>/",
         OffersDetailView.as_view(),
         name="offers-detail",
     ),
     path(
-        "offerdetails/<int:pk>/",
+        "offerdetails/<int:id>/",
         OfferdetailsView.as_view(),
         name="offerdetail-detail",
     ),

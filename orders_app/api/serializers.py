@@ -135,6 +135,24 @@ class OrderCountSerializer(serializers.ModelSerializer):
     OrderCountSerializer description
     """
 
+    order_count = serializers.SerializerMethodField()
+
     class Meta:
         model = Order
         fields = ["order_count"]
+
+
+class OrderCompletedCountSerializer(serializers.ModelSerializer):
+    """
+    OrderCompletedCountSerializer description
+    """
+
+    order_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Order
+        fields = ["completed_order_count"]
+
+    def get_order_count(self, obj):
+        # obj could be a user or any object you pass
+        return obj.orders.filter(status="in_progress").count()

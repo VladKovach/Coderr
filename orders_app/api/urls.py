@@ -1,5 +1,3 @@
-from django.conf import settings
-from django.conf.urls.static import static
 from django.urls import path
 
 from .views import (
@@ -12,7 +10,7 @@ from .views import (
 urlpatterns = [
     path("orders/", OrdersListCreateView.as_view(), name="orders-list"),
     path(
-        "orders/<int:pk>/",
+        "orders/<int:id>/",
         OrdersDetailView.as_view(),
         name="orders-detail",
     ),

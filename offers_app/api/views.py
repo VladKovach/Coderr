@@ -71,6 +71,7 @@ class OffersListCreateView(ListCreateAPIView):
     search_fields = ["title", "description"]
     ordering_fields = ["updated_at", "min_price"]
     filterset_class = OfferListFilter
+    lookup_field = "id"
 
     def get_permissions(self):
         if self.request.method == "GET":
@@ -95,6 +96,7 @@ class OffersListCreateView(ListCreateAPIView):
 
 class OffersDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Offer.objects.all()
+    lookup_field = "id"
 
     def get_permissions(self):
         if self.request.method == "GET":
@@ -120,3 +122,4 @@ class OfferdetailsView(RetrieveAPIView):
     queryset = OfferDetail.objects.all()
     serializer_class = OfferdetailsSerializer
     permission_classes = [IsAuthenticated]
+    lookup_field = "id"

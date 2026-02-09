@@ -26,6 +26,11 @@ class OfferdetailsRefSerializer(serializers.HyperlinkedModelSerializer):
     OfferdetailsRefSerializer description
     """
 
+    url = serializers.HyperlinkedIdentityField(
+        view_name="offerdetail-detail",
+        lookup_field="id",
+    )
+
     class Meta:
         model = OfferDetail
         fields = ["id", "url"]
