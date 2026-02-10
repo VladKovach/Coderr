@@ -29,7 +29,6 @@ class OrdersDetailView(generics.UpdateAPIView, generics.DestroyAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderDetailSerializer
     permission_classes = [IsAuthenticated, IsBusinessOrStaff]
-
     lookup_field = "id"
 
 

@@ -31,5 +31,5 @@ urlpatterns = [
     path(
         "api/", include("orders_app.api.urls")
     ),  # api/orders/ and "api/order-count/ and etc..
-    # path("api/reviews/", include("reviews_app.api.urls")),
+    path("api/", include("reviews_app.api.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
