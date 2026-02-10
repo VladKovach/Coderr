@@ -1,3 +1,4 @@
+from django.db import connection
 from django.db.models import Min
 from django_filters import FilterSet, NumberFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -84,9 +85,6 @@ class OffersListCreateView(ListCreateAPIView):
             return OffersSerializer
         return OffersListSerializer
 
-    # def get_serializer_context(self):
-    #     return {"request": self.request}
-
     def get_queryset(self):
         return Offer.objects.prefetch_related("details").annotate(
             min_delivery_time=Min("details__delivery_time_in_days"),
@@ -112,7 +110,7 @@ class OffersDetailView(RetrieveUpdateDestroyAPIView):
         return OffersSerializer
 
     def get_queryset(self):
-        return Offer.objects.prefetch_related("details").annotate(
+        return Offer.objects.annotate(
             min_delivery_time=Min("details__delivery_time_in_days"),
             min_price=Min("details__price"),
         )

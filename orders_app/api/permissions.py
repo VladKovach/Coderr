@@ -16,4 +16,4 @@ class IsBusinessOrStaff(BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method == "DELETE":
             return request.user.is_staff
-        return request.user.type == "business"
+        return obj.business_user == request.user
