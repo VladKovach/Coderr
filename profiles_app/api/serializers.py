@@ -1,6 +1,6 @@
-from datetime import datetime
-
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+from rest_framework.fields import DjangoValidationError
 
 from profiles_app.models import Profile
 
@@ -32,24 +32,6 @@ class ProfileDetailSerializer(serializers.ModelSerializer):
             "email",
             "created_at",
         ]
-
-    def validate(self, attrs):
-        # self.instance is always the existing Profile
-        # Copy current instance
-        instance = self.instance
-
-        # Apply incoming changes to the instance
-        for attr, value in attrs.items():
-            if attr == "user":
-                for u_attr, u_value in value.items():
-                    setattr(instance.user, u_attr, u_value)
-            else:
-                setattr(instance, attr, value)
-
-        # Now validate the modified instance
-        instance.full_clean()
-
-        return attrs
 
     def update(self, instance, validated_data):
         user_data = validated_data.pop("user", {})

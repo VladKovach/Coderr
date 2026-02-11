@@ -15,6 +15,15 @@ working_hours_validator = RegexValidator(
     regex=r"^(?:[0-9]|1[0-9]|2[0-3])-(?:[0-9]|1[0-9]|2[0-3])$",
     message="Use HH-HH format (0–23), e.g. 10-18",
 )
+letters_unicode = RegexValidator(
+    regex=r"^[^\W\d_]+$", message="Only letters are allowed."
+)
+
+
+def working_hours_logic(value):
+    start, end = value.split("-")
+    if int(start) >= int(end):
+        raise ValidationError("Start time must be before end time.")
 
 
 class Profile(models.Model):
@@ -33,24 +42,22 @@ class Profile(models.Model):
     )
     file = models.ImageField(upload_to="profile/", blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    # working_from = models.TimeField(blank=True, null=True)
-    # working_to = models.TimeField(blank=True, null=True)
     working_hours = models.CharField(
-        max_length=5,  # "10-18"
-        validators=[working_hours_validator],
+        max_length=5,
         blank=True,
         null=True,
+        validators=[working_hours_validator, working_hours_logic],
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def clean(self):
-        if self.working_hours:
-            start, end = self.working_hours.split("-")
+    # def clean(self):
+    #     if self.working_hours:
+    #         start, end = self.working_hours.split("-")
 
-            if int(start) >= int(end):
-                raise ValidationError(
-                    {"working_hours": "Start time must be before end time."}
-                )
+    #         if int(start) >= int(end):
+    #             raise ValidationError(
+    #                 {"working_hours": "Start time must be before end time."}
+    #             )
 
     class Meta:
         """Meta definition for Profile."""

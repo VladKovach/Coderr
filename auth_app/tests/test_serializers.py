@@ -54,5 +54,4 @@ class LoginSerializerTest(TestCase):
         self.assertFalse(serializer.is_valid())
 
         self.assertIn("username", serializer.errors)
-        self.assertIn("email", serializer.errors)
-        self.assertIn("type", serializer.errors)
+        self.assertIn("password", serializer.errors)
