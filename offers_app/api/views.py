@@ -1,5 +1,5 @@
 from django.db import connection
-from django.db.models import Min
+from django.db.models import F, Min
 from django_filters import FilterSet, NumberFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.exceptions import ValidationError
@@ -16,8 +16,8 @@ from offers_app.api.permissions import IsBusinessUser, IsOfferOwner
 from offers_app.api.serializers import (
     OfferdetailsSerializer,
     OffersDetailSerializer,
+    OfferSerializer,
     OffersListSerializer,
-    OffersSerializer,
 )
 from offers_app.models import Offer, OfferDetail
 
@@ -82,13 +82,22 @@ class OffersListCreateView(ListCreateAPIView):
 
     def get_serializer_class(self):
         if self.request.method == "POST":
-            return OffersSerializer
+            return OfferSerializer
         return OffersListSerializer
 
     def get_queryset(self):
+        if self.request.method == "POST":
+            return Offer.objects.prefetch_related("details").annotate(
+                min_delivery_time=Min("details__delivery_time_in_days"),
+                min_price=Min("details__price"),
+            )
+        # GET :
         return Offer.objects.prefetch_related("details").annotate(
             min_delivery_time=Min("details__delivery_time_in_days"),
             min_price=Min("details__price"),
+            user_first_name=F("user__first_name"),
+            user_last_name=F("user__last_name"),
+            user_username=F("user__username"),
         )
 
 
@@ -107,7 +116,7 @@ class OffersDetailView(RetrieveUpdateDestroyAPIView):
         if self.request.method == "GET":
             return OffersDetailSerializer
         # PATCH/PUT/DELETE → normal serializer
-        return OffersSerializer
+        return OfferSerializer
 
     def get_queryset(self):
         return Offer.objects.annotate(

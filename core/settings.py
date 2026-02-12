@@ -141,5 +141,6 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     "PAGE_SIZE": 8,
+    "COERCE_DECIMAL_TO_STRING": False,
 }
 AUTH_USER_MODEL = "auth_app.User"

@@ -36,9 +36,9 @@ class OfferdetailsRefSerializer(serializers.HyperlinkedModelSerializer):
         fields = ["id", "url"]
 
 
-class OffersSerializer(serializers.ModelSerializer):
+class OfferSerializer(serializers.ModelSerializer):
     """
-    OffersSerializer description
+    OfferSerializer description
     """
 
     details = OfferdetailsSerializer(many=True)
@@ -52,6 +52,17 @@ class OffersSerializer(serializers.ModelSerializer):
             "description",
             "details",
         ]
+
+    def validate_details(self, value):
+        """
+        Enforce exactly 3 detail objects if POST
+        """
+
+        if self.context["request"].method == "POST" and len(value) != 3:
+            raise serializers.ValidationError(
+                "Exactly 3 detail objects are required: basic, standard, premium."
+            )
+        return value
 
     def update(self, instance, validated_data):
         details_data = validated_data.pop("details", None)
@@ -88,6 +99,7 @@ class OffersListSerializer(serializers.ModelSerializer):
     min_price = serializers.IntegerField(read_only=True)
     min_delivery_time = serializers.IntegerField(read_only=True)
     details = OfferdetailsRefSerializer(many=True, read_only=True)
+    user_details = serializers.SerializerMethodField()
 
     class Meta:
         model = Offer
@@ -102,14 +114,21 @@ class OffersListSerializer(serializers.ModelSerializer):
             "details",
             "min_price",
             "min_delivery_time",
+            "user_details",
         ]
+
+    def get_user_details(self, obj):
+        return {
+            "first_name": obj.user_first_name,
+            "last_name": obj.user_last_name,
+            "username": obj.user_username,
+        }
 
 
 class OffersDetailSerializer(serializers.ModelSerializer):
     min_price = serializers.IntegerField(read_only=True)
     min_delivery_time = serializers.IntegerField(read_only=True)
     details = OfferdetailsRefSerializer(many=True, read_only=True)
-    # details = OfferdetailsSerializer(many=True, read_only=True)
 
     class Meta:
         model = Offer
