@@ -1,6 +1,5 @@
 from unittest import TestCase
 
-from auth_app.factories import UserFactory
 from offers_app.api.serializers import OfferSerializer
 
 

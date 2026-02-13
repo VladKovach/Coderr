@@ -115,6 +115,7 @@ class OrderDetailSerializer(serializers.ModelSerializer):
             "offer_type",
             "status",
             "created_at",
+            "updated_at",
         ]
         read_only_fields = [
             "id",
@@ -127,6 +128,7 @@ class OrderDetailSerializer(serializers.ModelSerializer):
             "features",
             "offer_type",
             "created_at",
+            "updated_at",
         ]
 
 
