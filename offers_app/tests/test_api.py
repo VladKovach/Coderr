@@ -257,13 +257,21 @@ class OfferCRUDTestsUnHappy(APITestCase):
         Ensure we can not patch  offer with false data.
         """
 
-        # ------ helper POST --------
+        # ------ helper POST -------
         post_url = reverse("offers-list")
         request_data = {
-            "title": "",
-            "description": "",
-            "image": "qweqwe",
+            "title": "Grafikdesign-Paket",
+            "description": "Ein umfassendes Grafikdesign-Paket für Unternehmen.",
+            "image": None,
             "details": [
+                {
+                    "title": "Basic Design",
+                    "revisions": 2,
+                    "delivery_time_in_days": 5,
+                    "price": 100,
+                    "features": ["Logo Design", "Visitenkarte"],
+                    "offer_type": "basic",
+                },
                 {
                     "title": "Standard Design",
                     "revisions": 5,

@@ -122,8 +122,8 @@ class ReviewCRUDTestsUnHappy(APITestCase):
 
         request_data = {
             "business_user": 2,
-            "rating": 4,
-            "description": "Alles war toll!",
+            "rating": -1,
+            "description": "",
         }
         post_response = self.client.post(
             self.reviews_list_url, data=request_data, format="json"
@@ -140,7 +140,7 @@ class ReviewCRUDTestsUnHappy(APITestCase):
             "business": "1",
             "order": "100",
         }
-        url = f"{reverse(self.reviews_list_url)}?{urlencode(params)}"
+        url = f"{self.reviews_list_url}?{urlencode(params)}"
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -149,7 +149,16 @@ class ReviewCRUDTestsUnHappy(APITestCase):
         """
         Ensure creator can not patch  review with wrong data.
         """
-
+        # ------------ helper POST --------------
+        request_data = {
+            "business_user": 2,
+            "rating": 4,
+            "description": "Alles war toll!",
+        }
+        self.post_response = self.client.post(
+            self.reviews_list_url, data=request_data, format="json"
+        )
+        # ------------ helper POST --------------
         request_data = {
             "rating": -1,
             "description": "",
