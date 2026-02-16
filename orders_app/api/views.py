@@ -16,6 +16,8 @@ User = get_user_model()
 
 
 class OrdersListCreateView(generics.ListCreateAPIView):
+    """View for listing and creating orders."""
+
     queryset = Order.objects.all()
     permission_classes = [IsAuthenticated, IsCustomerForCreate]
 
@@ -26,6 +28,8 @@ class OrdersListCreateView(generics.ListCreateAPIView):
 
 
 class OrdersDetailView(generics.UpdateAPIView, generics.DestroyAPIView):
+    """View for updating, and deleting orders."""
+
     queryset = Order.objects.all()
     serializer_class = OrderDetailSerializer
     permission_classes = [IsAuthenticated, IsBusinessOrStaff]
@@ -33,6 +37,7 @@ class OrdersDetailView(generics.UpdateAPIView, generics.DestroyAPIView):
 
 
 class OrderCountDetailView(APIView):
+    """View for getting the count of in-progress orders for a business user."""
 
     def get(self, request, *args, **kwargs):
         business_user_id = kwargs.get("business_user_id")
@@ -57,6 +62,8 @@ class OrderCountDetailView(APIView):
 
 
 class OrderCompletedCountDetailView(APIView):
+    """View for getting the count of completed orders for a business user."""
+
     def get(self, request, *args, **kwargs):
         business_user_id = kwargs.get("business_user_id")
 

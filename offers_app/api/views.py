@@ -1,4 +1,3 @@
-from django.db import connection
 from django.db.models import F, Min
 from django_filters import FilterSet, NumberFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -23,12 +22,16 @@ from offers_app.models import Offer, OfferDetail
 
 
 class OffersPagination(PageNumberPagination):
-    page_size = 10
+    """Custom pagination class for Offers list view with default page size of 10 and max page size of 100."""
+
+    page_size = 6
     page_size_query_param = "page_size"
     max_page_size = 100
 
 
 class OfferListFilter(FilterSet):
+    """Custom filter class for Offers list view to filter by creator_id, min_price, and max_delivery_time."""
+
     min_price = NumberFilter(lookup_expr="gte")
     max_delivery_time = NumberFilter(
         field_name="details__delivery_time_in_days", lookup_expr="lte"
@@ -67,6 +70,8 @@ class OfferListFilter(FilterSet):
 
 
 class OffersListCreateView(ListCreateAPIView):
+    """View for listing all offers and creating a new offer. GET is open to all, POST is restricted to authenticated business users."""
+
     pagination_class = OffersPagination
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     search_fields = ["title", "description"]
@@ -119,6 +124,8 @@ class OffersListCreateView(ListCreateAPIView):
 
 
 class OffersDetailView(RetrieveUpdateDestroyAPIView):
+    """View for retrieving, updating, or deleting a specific offer. GET is open to all, PATCH/DELETE is restricted to the offer owner."""
+
     queryset = Offer.objects.all()
     lookup_field = "id"
 

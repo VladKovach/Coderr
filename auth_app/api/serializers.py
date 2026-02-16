@@ -19,12 +19,12 @@ class RegistrationSerializer(serializers.ModelSerializer):
         extra_kwargs = {"password": {"write_only": True}}
 
     def validate(self, attrs):
-        # Password confirmation check
+        """Password confirmation check and email uniqueness check"""
         if attrs["password"] != attrs["repeated_password"]:
             raise serializers.ValidationError(
                 {"repeated_password": "Passwords do not match."}
             )
-        # Check email uniqueness
+
         if User.objects.filter(email=attrs["email"]).exists():
             raise serializers.ValidationError(
                 {"email": "User with this email already exists."}
@@ -33,7 +33,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        # Remove confirmation field before user creation
         validated_data.pop("repeated_password")
         user = User.objects.create_user(**validated_data)
         Profile.objects.create(user=user)
@@ -49,8 +48,6 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
-        username = attrs.get("username")
-        password = attrs.get("password")
 
         user = authenticate(
             username=attrs.get("username"),

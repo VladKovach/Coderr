@@ -63,9 +63,17 @@ Verify installation:
 pip list
 ```
 
-## 💾 Database Setup
+### Step 4: Environment Setup
 
-### Apply Migrations
+#### Copy .env
+
+```
+cp .env.template .env
+```
+
+### Step 5: Database Setup
+
+#### Apply Migrations
 
 Create the database tables and apply all migrations:
 
@@ -77,7 +85,7 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-### Create a Superuser (Admin)
+### Step 6: Create a Superuser (Admin)
 
 Create an admin account to access the Django admin panel:
 
@@ -91,9 +99,9 @@ Follow the prompts to enter:
 - Email
 - Password
 
-## 🏃 Running the Application
+### Step 7: Running the Application 🏃
 
-### Start the Development Server
+#### Start the Development Server
 
 ```bash
 python manage.py runserver

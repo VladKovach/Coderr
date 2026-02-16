@@ -7,7 +7,7 @@ from django.db import models
 User = get_user_model()
 
 phone_validator = RegexValidator(
-    regex=r"^[0-9]{6,15}$",
+    regex=r"^[0-9-]{6,15}$",
     message="Phone number must contain only digits (6–15 digits).",
 )
 working_hours_validator = RegexValidator(
@@ -34,28 +34,18 @@ class Profile(models.Model):
         primary_key=True,
         related_name="profile",
     )
-    location = models.CharField(max_length=255, blank=True, null=True)
+    location = models.CharField(max_length=255, blank=True)
     tel = models.CharField(
-        max_length=20, validators=[phone_validator], blank=True, null=True
+        max_length=20, validators=[phone_validator], blank=True
     )
-    file = models.ImageField(upload_to="profile/", blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
+    file = models.ImageField(upload_to="profile/", blank=True)
+    location = models.TextField(blank=True)
     working_hours = models.CharField(
         max_length=5,
         blank=True,
-        null=True,
-        validators=[working_hours_validator, working_hours_logic],
+        # validators=[working_hours_validator, working_hours_logic],
     )
     created_at = models.DateTimeField(auto_now_add=True)
-
-    # def clean(self):
-    #     if self.working_hours:
-    #         start, end = self.working_hours.split("-")
-
-    #         if int(start) >= int(end):
-    #             raise ValidationError(
-    #                 {"working_hours": "Start time must be before end time."}
-    #             )
 
     class Meta:
         """Meta definition for Profile."""

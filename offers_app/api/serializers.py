@@ -62,9 +62,17 @@ class OfferSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "Exactly 3 detail objects are required: basic, standard, premium."
             )
+        else:
+            for detail in value:
+                if not detail.get("offer_type"):
+                    raise serializers.ValidationError(
+                        "offer_type field is required"
+                    )
+
         return value
 
     def update(self, instance, validated_data):
+        """Handle nested update for Offerdetails"""
         details_data = validated_data.pop("details", None)
 
         # Update Offer fields
@@ -74,11 +82,12 @@ class OfferSerializer(serializers.ModelSerializer):
             for detail in details_data:
                 offer_type = detail.get("offer_type")
                 offer_detail = instance.details.get(offer_type=offer_type)
-                super().update(offer_detail, detail)
+                super().update(offer_detail, detail)  # Update Offerdetails f
 
         return instance
 
     def create(self, validated_data):
+        """Handle offer creation and nested creation for Offerdetails"""
         details_data = validated_data.pop("details")
 
         # Assign user automatically
