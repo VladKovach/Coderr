@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
-from phonenumber_field.modelfields import PhoneNumberField
 
 # Create your models here.
 User = get_user_model()
@@ -36,7 +35,6 @@ class Profile(models.Model):
         related_name="profile",
     )
     location = models.CharField(max_length=255, blank=True, null=True)
-    # tel = PhoneNumberField(region="DE", blank=True, null=True)
     tel = models.CharField(
         max_length=20, validators=[phone_validator], blank=True, null=True
     )
