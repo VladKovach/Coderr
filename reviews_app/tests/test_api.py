@@ -1,3 +1,5 @@
+from urllib.parse import urlencode
+
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -104,105 +106,56 @@ class ReviewCRUDTestsHappy(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
-# class ReviewCRUDTestsUnHappy(APITestCase):
+class ReviewCRUDTestsUnHappy(APITestCase):
+    def setUp(self):
+        self.customer_user = UserFactory(type="customer")
+        self.business_user = UserFactory()
+        self.client.force_authenticate(user=self.customer_user)
 
-#     def setUp(self):
-#         self.customer_user = UserFactory(type="customer")
-#         self.business_user = UserFactory()
-#         self.client.force_authenticate(user=self.business_user)
-#         # ------ helper POST requests -------
+        self.reviews_list_url = reverse("reviews-list")
+        self.reviews_detail_url = reverse("reviews-detail", kwargs={"id": 1})
 
-#         post_offer_url = reverse("offers-list")
-#         offer_request_data = {
-#             "title": "Grafikdesign-Paket",
-#             "description": "Ein umfassendes Grafikdesign-Paket für Unternehmen.",
-#             "image": None,
-#             "details": [
-#                 {
-#                     "title": "Logo Design",
-#                     "revisions": 3,
-#                     "delivery_time_in_days": 5,
-#                     "price": 150,
-#                     "features": ["Logo Design", "Visitenkarten"],
-#                     "offer_type": "basic",
-#                 },
-#                 {
-#                     "title": "Standard Design",
-#                     "revisions": 5,
-#                     "delivery_time_in_days": 7,
-#                     "price": 200,
-#                     "features": ["Logo Design", "Visitenkarte", "Briefpapier"],
-#                     "offer_type": "standard",
-#                 },
-#                 {
-#                     "title": "Premium Design",
-#                     "revisions": 10,
-#                     "delivery_time_in_days": 10,
-#                     "price": 500,
-#                     "features": [
-#                         "Logo Design",
-#                         "Visitenkarte",
-#                         "Briefpapier",
-#                         "Flyer",
-#                     ],
-#                     "offer_type": "premium",
-#                 },
-#             ],
-#         }
-#         self.post_response = self.client.post(
-#             post_offer_url, data=offer_request_data, format="json"
-#         )
+    def test_create_review_not_ok(self):
+        """
+        Ensure we can not create a new review with wrong data.
+        """
 
-#         self.client.force_authenticate(user=self.customer_user)
+        request_data = {
+            "business_user": 2,
+            "rating": 4,
+            "description": "Alles war toll!",
+        }
+        post_response = self.client.post(
+            self.reviews_list_url, data=request_data, format="json"
+        )
+        self.assertEqual(
+            post_response.status_code, status.HTTP_400_BAD_REQUEST
+        )
 
-#         post_review_url = reverse("reviews-list")
-#         review_request_data = {"offer_detail_id": 1}
-#         self.post_response = self.client.post(
-#             post_review_url, data=review_request_data, format="json"
-#         )
-#         # ------ helper POST requests -------
+    def test_get_reviews_list_not_ok(self):
+        """
+        Ensure we can not get reviews with wrong query params.
+        """
+        params = {  # not existing params
+            "business": "1",
+            "order": "100",
+        }
+        url = f"{reverse(self.reviews_list_url)}?{urlencode(params)}"
 
-#     def test_post_review_with_invalid_offer_detail_id(self):
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-#         url = reverse("reviews-list")
-#         review_request_data = {"offer_detail_id": 111}
-#         post_response = self.client.post(
-#             url, data=review_request_data, format="json"
-#         )
-#         self.assertEqual(
-#             post_response.status_code, status.HTTP_400_BAD_REQUEST
-#         )
-#         self.assertIn("offer_detail_id", post_response.data)
+    def test_patch_review_not_ok(self):
+        """
+        Ensure creator can not patch  review with wrong data.
+        """
 
-#     def test_patch_review_with_invalid_fields(self):
-#         self.client.force_authenticate(user=self.business_user)
-#         url = reverse("reviews-detail", kwargs={"id": 1})
-#         review_request_data = {"status": "wrong"}
-#         post_response = self.client.patch(
-#             url, data=review_request_data, format="json"
-#         )
-#         self.assertEqual(
-#             post_response.status_code, status.HTTP_400_BAD_REQUEST
-#         )
-#         self.assertIn("status", post_response.data)
+        request_data = {
+            "rating": -1,
+            "description": "",
+        }
 
-#     def test_delete_review_with_invalid_id(self):
-#         staff = UserFactory(is_staff=True)
-#         self.client.force_authenticate(user=staff)
-#         url = reverse("reviews-detail", kwargs={"id": 100})
-#         post_response = self.client.delete(url)
-#         self.assertEqual(post_response.status_code, status.HTTP_404_NOT_FOUND)
-
-#     def test_get_review_count_detail_with_no_existed_user(self):
-#         url = reverse("review_count-detail", kwargs={"business_user_id": 21})
-#         response = self.client.get(url)
-
-#         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-#     def test_get_review_completed_count_detail_with_no_existed_user(self):
-#         url = reverse(
-#             "review_completed_count-detail", kwargs={"business_user_id": 21}
-#         )
-#         response = self.client.get(url)
-
-#         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        response = self.client.patch(
+            self.reviews_detail_url, data=request_data, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

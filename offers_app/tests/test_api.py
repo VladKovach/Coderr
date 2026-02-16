@@ -233,54 +233,15 @@ class OfferCRUDTestsUnHappy(APITestCase):
             post_url, data=request_data, format="json"
         )
 
-        expected_valid_response = {
-            "id": 1,
-            "title": "Grafikdesign-Paket",
-            "image": None,
-            "description": "Ein umfassendes Grafikdesign-Paket für Unternehmen.",
-            "details": [
-                {
-                    "id": 1,
-                    "title": "Basic Design",
-                    "revisions": 2,
-                    "delivery_time_in_days": 5,
-                    "price": 100,
-                    "features": ["Logo Design", "Visitenkarte"],
-                    "offer_type": "basic",
-                },
-                {
-                    "id": 2,
-                    "title": "Standard Design",
-                    "revisions": 5,
-                    "delivery_time_in_days": 7,
-                    "price": 200,
-                    "features": ["Logo Design", "Visitenkarte", "Briefpapier"],
-                    "offer_type": "standard",
-                },
-                {
-                    "id": 3,
-                    "title": "Premium Design",
-                    "revisions": 10,
-                    "delivery_time_in_days": 10,
-                    "price": 500,
-                    "features": [
-                        "Logo Design",
-                        "Visitenkarte",
-                        "Briefpapier",
-                        "Flyer",
-                    ],
-                    "offer_type": "premium",
-                },
-            ],
-        }
         self.assertEqual(
             post_response.status_code, status.HTTP_400_BAD_REQUEST
         )
         self.assertNotEqual(Offer.objects.count(), 1)
-        self.assertNotEqual(post_response.data, expected_valid_response)
 
     def test_get_offer_not_ok(self):
-
+        """
+        Ensure we can not get offers with false query params.
+        """
         params = {  # not existing params
             "owner_id": "1",
             "max_price": "100",

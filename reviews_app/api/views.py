@@ -39,10 +39,23 @@ class ReviewsListCreateView(generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = RewiewListFilter
     ordering_fields = ["updated_at", "rating"]
+    ALLOWED_QUERY_PARAMS = {"business_user_id", "reviewer_id", "ordering"}
 
     def perform_create(self, serializer):
         """Automatically set reviewer to current user."""
         serializer.save(reviewer=self.request.user)
+
+    def get_queryset(self):
+        unknown = set(self.request.query_params) - self.ALLOWED_QUERY_PARAMS
+
+        if unknown:
+            raise ValidationError(
+                {
+                    "query_params": f"Unknown parameters: {', '.join(sorted(unknown))}"
+                }
+            )
+
+        return super().get_queryset()
 
 
 class ReviewsDetailView(generics.UpdateAPIView, generics.DestroyAPIView):

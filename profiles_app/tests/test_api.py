@@ -9,7 +9,7 @@ from profiles_app.models import Profile
 User = get_user_model()
 
 
-class ProfileTests(APITestCase):
+class ProfileTestsHappy(APITestCase):
     def setUp(self):
         self.user = UserFactory()
         self.profile = Profile.objects.create(user=self.user)
@@ -65,3 +65,28 @@ class ProfileTests(APITestCase):
             response.data["working_hours"], request_data["working_hours"]
         )
         self.assertEqual(response.data["email"], request_data["email"])
+
+
+class ProfileTestsUnHappy(APITestCase):
+    def setUp(self):
+        self.user = UserFactory()
+        self.profile = Profile.objects.create(user=self.user)
+        self.client.force_authenticate(user=self.user)
+
+    def test_patch_profile(self):
+        """
+        Ensure we can not patch profile with wrong data.
+        """
+        url = reverse("profile-detail", kwargs={"pk": self.user.id})
+
+        request_data = {
+            "first_name": "",
+            "last_name": "",
+            "location": "111",
+            "tel": "qwdwq",
+            "description": "Updated business description",
+            "working_hours": "19-18",
+            "email": "1",
+        }
+        response = self.client.patch(url, request_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
