@@ -20,7 +20,6 @@ def base_info_view(request):
         average_rating=Round(Avg("rating", default=0), precision=1)
     )["average_rating"]
 
-    print('data["average_rating"] = ', data["average_rating"])
     data["business_profile_count"] = User.objects.filter(
         type="business"
     ).count()

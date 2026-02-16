@@ -10,7 +10,6 @@ class BaseInfoTests(APITestCase):
         """
         url = reverse("baseinfo")
         response = self.client.get(url)
-        print("response = ", response)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
         self.assertIn("review_count", data)

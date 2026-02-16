@@ -13,6 +13,4 @@ class IsProfileOwner(BasePermission):
         if request.method in SAFE_METHODS:
             return True
         elif request.method == "PATCH" or request.method == "PUT":
-            print("obj.user = ", obj.user)
-            print("request.user = ", request.user)
             return obj.user == request.user

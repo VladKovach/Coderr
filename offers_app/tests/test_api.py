@@ -1,3 +1,5 @@
+from urllib.parse import urlencode
+
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -6,7 +8,7 @@ from auth_app.factories import UserFactory
 from offers_app.models import Offer
 
 
-class OfferCRUDTests(APITestCase):
+class OfferCRUDTestsHappy(APITestCase):
     def setUp(self):
         self.user = UserFactory()
         self.client.force_authenticate(user=self.user)
@@ -187,3 +189,160 @@ class OfferCRUDTests(APITestCase):
         self.assertIn("price", response.data)
         self.assertIn("features", response.data)
         self.assertIn("offer_type", response.data)
+
+
+class OfferCRUDTestsUnHappy(APITestCase):
+    def setUp(self):
+        self.user = UserFactory()
+        self.client.force_authenticate(user=self.user)
+
+    def test_create_offer_not_ok(self):
+        """
+        Ensure we can not create a new offer  with false data.
+        """
+        post_url = reverse("offers-list")
+        request_data = {
+            "title": "",
+            "description": "",
+            "image": "qweqwe",
+            "details": [
+                {
+                    "title": "Standard Design",
+                    "revisions": 5,
+                    "delivery_time_in_days": 7,
+                    "price": 200,
+                    "features": ["Logo Design", "Visitenkarte", "Briefpapier"],
+                    "offer_type": "standard",
+                },
+                {
+                    "title": "Premium Design",
+                    "revisions": 10,
+                    "delivery_time_in_days": 10,
+                    "price": 500,
+                    "features": [
+                        "Logo Design",
+                        "Visitenkarte",
+                        "Briefpapier",
+                        "Flyer",
+                    ],
+                    "offer_type": "premium",
+                },
+            ],
+        }
+        post_response = self.client.post(
+            post_url, data=request_data, format="json"
+        )
+
+        expected_valid_response = {
+            "id": 1,
+            "title": "Grafikdesign-Paket",
+            "image": None,
+            "description": "Ein umfassendes Grafikdesign-Paket für Unternehmen.",
+            "details": [
+                {
+                    "id": 1,
+                    "title": "Basic Design",
+                    "revisions": 2,
+                    "delivery_time_in_days": 5,
+                    "price": 100,
+                    "features": ["Logo Design", "Visitenkarte"],
+                    "offer_type": "basic",
+                },
+                {
+                    "id": 2,
+                    "title": "Standard Design",
+                    "revisions": 5,
+                    "delivery_time_in_days": 7,
+                    "price": 200,
+                    "features": ["Logo Design", "Visitenkarte", "Briefpapier"],
+                    "offer_type": "standard",
+                },
+                {
+                    "id": 3,
+                    "title": "Premium Design",
+                    "revisions": 10,
+                    "delivery_time_in_days": 10,
+                    "price": 500,
+                    "features": [
+                        "Logo Design",
+                        "Visitenkarte",
+                        "Briefpapier",
+                        "Flyer",
+                    ],
+                    "offer_type": "premium",
+                },
+            ],
+        }
+        self.assertEqual(
+            post_response.status_code, status.HTTP_400_BAD_REQUEST
+        )
+        self.assertNotEqual(Offer.objects.count(), 1)
+        self.assertNotEqual(post_response.data, expected_valid_response)
+
+    def test_get_offer_not_ok(self):
+
+        params = {  # not existing params
+            "owner_id": "1",
+            "max_price": "100",
+        }
+        url = f"{reverse('offers-list')}?{urlencode(params)}"
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_patch_offer_not_ok(self):
+        """
+        Ensure we can not patch  offer with false data.
+        """
+
+        # ------ helper POST --------
+        post_url = reverse("offers-list")
+        request_data = {
+            "title": "",
+            "description": "",
+            "image": "qweqwe",
+            "details": [
+                {
+                    "title": "Standard Design",
+                    "revisions": 5,
+                    "delivery_time_in_days": 7,
+                    "price": 200,
+                    "features": ["Logo Design", "Visitenkarte", "Briefpapier"],
+                    "offer_type": "standard",
+                },
+                {
+                    "title": "Premium Design",
+                    "revisions": 10,
+                    "delivery_time_in_days": 10,
+                    "price": 500,
+                    "features": [
+                        "Logo Design",
+                        "Visitenkarte",
+                        "Briefpapier",
+                        "Flyer",
+                    ],
+                    "offer_type": "premium",
+                },
+            ],
+        }
+        self.client.post(post_url, data=request_data, format="json")
+        # ------ helper POST --------
+
+        url = reverse("offers-detail", kwargs={"id": 1})
+        request_data = {
+            "title": "",
+            "details": [
+                {
+                    "title": "",
+                    "revisions": -1,
+                    "delivery_time_in_days": 0,
+                    "price": "qwd",
+                    "features": ["Logo Design", "Flyer"],
+                    "offer_type": "basic",
+                }
+            ],
+        }
+
+        response = self.client.patch(url, data=request_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

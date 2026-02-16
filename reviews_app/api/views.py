@@ -14,7 +14,6 @@ from reviews_app.models import Review
 
 
 class RewiewListFilter(FilterSet):
-    # business_user_id = NumberFilter(field_name="business_user_id") no need if same naming
 
     class Meta:
         model = Review
@@ -23,7 +22,6 @@ class RewiewListFilter(FilterSet):
     def clean(self):
         cleaned_data = super().clean()
         business_user_id = cleaned_data.get("business_user_id")
-        print("business_user_id = ", business_user_id)
         if business_user_id is not None and not business_user_id.is_integer():
             raise ValidationError({"creator_id": "Must be an integer"})
 

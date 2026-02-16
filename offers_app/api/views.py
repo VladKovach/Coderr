@@ -74,6 +74,16 @@ class OffersListCreateView(ListCreateAPIView):
     filterset_class = OfferListFilter
     lookup_field = "id"
 
+    ALLOWED_QUERY_PARAMS = {
+        "creator_id",
+        "min_price",
+        "max_delivery_time",
+        "ordering",
+        "search",
+        "page",
+        "page_size",
+    }
+
     def get_permissions(self):
         if self.request.method == "GET":
             return [AllowAny()]
@@ -86,6 +96,13 @@ class OffersListCreateView(ListCreateAPIView):
         return OffersListSerializer
 
     def get_queryset(self):
+        unknown = set(self.request.query_params) - self.ALLOWED_QUERY_PARAMS
+        if unknown:
+            raise ValidationError(
+                {
+                    "query_params": f"Unknown parameters: {', '.join(sorted(unknown))}"
+                }
+            )
         if self.request.method == "POST":
             return Offer.objects.prefetch_related("details").annotate(
                 min_delivery_time=Min("details__delivery_time_in_days"),
