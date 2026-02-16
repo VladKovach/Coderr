@@ -114,14 +114,20 @@ The server will run at: **http://127.0.0.1:8000/**
 The API is organized by feature modules:
 
 ```
-/api/auth/           # Authentication endpoints
+/api/registration/
+/api/login/          # Authentication endpoints
+
 /api/profiles/       # Profiles specific info
 /api/profile/        # Profiles management
+
 /api/offers/         # Service offers
 /api/offerdetails/   # Offer details
+
 /api/orders/         # Order management
 /api/order-count/    # Order statistics
+
 /api/reviews/        # Review system
+
 /api/base-info/      # Dashboard analytics
 ```
 
