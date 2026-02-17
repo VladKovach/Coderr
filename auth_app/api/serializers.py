@@ -33,6 +33,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
+        """Create a new user and associated profile."""
         validated_data.pop("repeated_password")
         user = User.objects.create_user(**validated_data)
         Profile.objects.create(user=user)
@@ -48,7 +49,7 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
-
+        """Authenticate user with provided credentials."""
         user = authenticate(
             username=attrs.get("username"),
             password=attrs.get("password"),

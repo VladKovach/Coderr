@@ -90,17 +90,25 @@ class OffersListCreateView(ListCreateAPIView):
     }
 
     def get_permissions(self):
+        """Allow anyone to GET the list of offers, but only authenticated business users can POST a new offer."""
         if self.request.method == "GET":
             return [AllowAny()]
         # POST
         return [IsAuthenticated(), IsBusinessUser()]
 
     def get_serializer_class(self):
+        """Use OffersListSerializer for GET requests and
+        OfferSerializer for POST requests."""
         if self.request.method == "POST":
             return OfferSerializer
         return OffersListSerializer
 
     def get_queryset(self):
+        """Validate query parameters and return the appropriate queryset
+        for GET and POST requests.
+        For GET, annotate with user details and min price/delivery time.
+        For POST, just annotate with min price/delivery time.
+        """
         unknown = set(self.request.query_params) - self.ALLOWED_QUERY_PARAMS
         if unknown:
             raise ValidationError(
@@ -124,18 +132,23 @@ class OffersListCreateView(ListCreateAPIView):
 
 
 class OffersDetailView(RetrieveUpdateDestroyAPIView):
-    """View for retrieving, updating, or deleting a specific offer. GET is open to all, PATCH/DELETE is restricted to the offer owner."""
+    """View for retrieving, updating, or deleting a specific offer.
+    GET is open to all, PATCH/DELETE is restricted to the offer owner."""
 
     queryset = Offer.objects.all()
     lookup_field = "id"
 
     def get_permissions(self):
+        """Allow anyone to GET offer details, but only the offer owner can
+        PATCH or DELETE."""
         if self.request.method == "GET":
             return [IsAuthenticated()]
         # PATCH/DELETE
         return [IsAuthenticated(), IsOfferOwner()]
 
     def get_serializer_class(self):
+        """Use OffersDetailSerializer for GET requests and
+        OfferSerializer for PATCH/DELETE requests."""
         # GET → extended serializer
         if self.request.method == "GET":
             return OffersDetailSerializer
@@ -143,6 +156,7 @@ class OffersDetailView(RetrieveUpdateDestroyAPIView):
         return OfferSerializer
 
     def get_queryset(self):
+        """Annotate the queryset with min price and delivery time for GET requests."""
         return Offer.objects.annotate(
             min_delivery_time=Min("details__delivery_time_in_days"),
             min_price=Min("details__price"),
@@ -150,6 +164,9 @@ class OffersDetailView(RetrieveUpdateDestroyAPIView):
 
 
 class OfferdetailsView(RetrieveAPIView):
+    """View for retrieving details of a specific offer detail.
+    GET is restricted to authenticated users."""
+
     queryset = OfferDetail.objects.all()
     serializer_class = OfferdetailsSerializer
     permission_classes = [IsAuthenticated]

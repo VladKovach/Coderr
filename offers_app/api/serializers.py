@@ -127,6 +127,7 @@ class OffersListSerializer(serializers.ModelSerializer):
         ]
 
     def get_user_details(self, obj):
+        """Get user details for the offer."""
         return {
             "first_name": obj.user_first_name,
             "last_name": obj.user_last_name,

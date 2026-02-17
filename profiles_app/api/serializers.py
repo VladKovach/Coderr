@@ -5,7 +5,7 @@ from profiles_app.models import Profile
 
 class ProfileDetailSerializer(serializers.ModelSerializer):
     """
-    Serializer description
+    ProfileDetailSerializer description
     """
 
     username = serializers.CharField(source="user.username", read_only=True)
@@ -32,6 +32,7 @@ class ProfileDetailSerializer(serializers.ModelSerializer):
         ]
 
     def update(self, instance, validated_data):
+        """Override update to handle nested User fields."""
         user_data = validated_data.pop("user", {})
 
         # Update User fields
@@ -44,6 +45,8 @@ class ProfileDetailSerializer(serializers.ModelSerializer):
 
 
 class ProfileBusinessSerializer(serializers.ModelSerializer):
+    """ProfileBusinessSerializer description"""
+
     username = serializers.CharField(source="user.username", read_only=True)
     first_name = serializers.CharField(source="user.first_name")
     last_name = serializers.CharField(source="user.last_name")
@@ -66,6 +69,8 @@ class ProfileBusinessSerializer(serializers.ModelSerializer):
 
 
 class ProfileCustomerSerializer(serializers.ModelSerializer):
+    """ProfileCustomerSerializer description"""
+
     username = serializers.CharField(source="user.username", read_only=True)
     first_name = serializers.CharField(source="user.first_name")
     last_name = serializers.CharField(source="user.last_name")
