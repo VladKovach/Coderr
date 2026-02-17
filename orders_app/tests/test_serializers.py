@@ -1,6 +1,5 @@
 from unittest import TestCase
 
-from auth_app.factories import UserFactory
 from orders_app.api.serializers import OrderDetailSerializer
 
 

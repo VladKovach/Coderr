@@ -38,6 +38,7 @@ class Profile(models.Model):
     tel = models.CharField(
         max_length=20, validators=[phone_validator], blank=True
     )
+    description = models.TextField(blank=True)
     file = models.ImageField(upload_to="profile/", blank=True)
     location = models.TextField(blank=True)
     working_hours = models.CharField(
@@ -55,4 +56,4 @@ class Profile(models.Model):
 
     def __str__(self):
         """Unicode representation of Profile."""
-        return self.user.id
+        return str(self.user.id)

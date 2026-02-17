@@ -14,6 +14,7 @@ User = get_user_model()
 @api_view()
 @permission_classes([AllowAny])
 def base_info_view(request):
+    """Public endpoint for fetching basic info for dashboard"""
     data = {}
     data["review_count"] = Review.objects.all().count()
     data["average_rating"] = Review.objects.aggregate(

@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase, force_authenticate
+from rest_framework.test import APITestCase
 
 from auth_app.factories import UserFactory
 from profiles_app.models import Profile

@@ -1,5 +1,4 @@
 from django.test import TestCase
-from rest_framework.exceptions import ValidationError
 
 from auth_app.factories import UserFactory
 from profiles_app.api.serializers import ProfileDetailSerializer

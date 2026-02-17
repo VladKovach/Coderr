@@ -3,7 +3,6 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from auth_app.factories import UserFactory
-from offers_app.models import Offer
 
 
 class OfferPremissionsTests(APITestCase):
