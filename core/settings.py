@@ -37,9 +37,9 @@ DEBUG = os.getenv("DEBUG")
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(",")
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://coder-api.vladkovach.com",
-    "https://vladkovach.github.io",
+    "https://coderr-api.vladkovach.com",
     "http://127.0.0.1:5500",
+    "https://coderr.vladkovach.com",
 ]
 
 
