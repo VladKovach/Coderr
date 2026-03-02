@@ -33,9 +33,19 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG")
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(",")
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://coder-api.vladkovach.com",
+    "https://vladkovach.github.io",
+    "http://127.0.0.1:5500",
+]
 
 
+CORS_ALLOWED_ORIGINS = os.environ.get(
+    "CORS_ALLOWED_ORIGINS",
+).split(",")
 # Application definition
 
 INSTALLED_APPS = [
@@ -48,6 +58,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "django_filters",
+    "corsheaders",
     # ------ apps -------
     "auth_app",
     "profiles_app",
@@ -61,6 +72,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
