@@ -154,7 +154,16 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "30/hour",
+        "user": "200/hour",
+    },
     "PAGE_SIZE": 6,
     "COERCE_DECIMAL_TO_STRING": False,
 }
 AUTH_USER_MODEL = "auth_app.User"
+SILENCED_SYSTEM_CHECKS = ["rest_framework.W001"]
